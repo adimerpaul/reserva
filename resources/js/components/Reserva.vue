@@ -15,7 +15,6 @@
         <button type="button" class="btn btn-success m-2" data-toggle="modal" data-target="#exampleModal">
             <i class="fa fa-plus-circle"></i> Crear nueva reservas
         </button>
-
         <!-- Modal -->
         <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg" role="document">
@@ -29,11 +28,34 @@
                     <div class="modal-body">
                         <form  @submit.prevent="Create">
                             <div class="form-group row">
-                                <vue-select-image :useLabel="true" :h="70" :w="70" :dataImages="dataImages" @onselectimage="onSelectImage">
+                                <vue-select-image  :useLabel="true"  :dataImages="dataImages" @onselectimage="onSelectImage">
                                 </vue-select-image>
-                                <label for="inputPassword" class="col-sm-2 col-form-label">Passwrd</label>
+
+                            </div>
+                            <div class="form-group row">
+                                <label  class="col-sm-2 col-form-label">Especialidad</label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control" id="inputPassword" placeholder="Password">
+<!--                                    <v-select :options="options"></v-select>-->
+                                    <v-select :options="options" label="title" v-model="especialidad">
+                                        <template #search="{attributes, events}">
+                                            <input
+                                                class="vs__search"
+                                                :required="!selected"
+                                                v-bind="attributes"
+                                                v-on="events"
+                                            />
+                                        </template>
+                                    </v-select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label  class="col-sm-2 col-form-label">Hora Inicio</label>
+                                <div class="col-sm-4">
+                                    <input type="datetime-local" >
+                                </div>
+                                <label  class="col-sm-2 col-form-label">Hora Inicio</label>
+                                <div class="col-sm-4">
+                                    <input type="datetime-local" >
                                 </div>
                             </div>
                             <div class="modal-footer">
@@ -56,9 +78,15 @@
     export default {
         data(){
             return {
+                options: [
+                    'foo',
+                    'bar',
+                    'baz'
+                ],
                 reservation:[],
                 doctors:[],
                 specialtys:[],
+                especialidad:'',
                 dataImages:[
                 // {
                 //     id: '1',
@@ -82,6 +110,9 @@
         },
         mounted() {
             // console.log();
+            axios.get('./especialtys',res=>{
+                console.log(res);
+            });
             axios.get('./reservation').then(res=>{
                 // console.log(res.data);
                 this.reservation=res.data;
@@ -104,7 +135,6 @@
                     eventLimit: true, // allow "more" link when too many events
                     events: this.reservation
                 });
-
                 calendar.render();
 
             })

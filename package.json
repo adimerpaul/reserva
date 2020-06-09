@@ -26,6 +26,7 @@
     "dependencies": {
         "vue-route": "^1.5.1",
         "vue-router": "^3.3.2",
+        "vue-select": "^3.10.3",
         "vue-select-image": "^1.7.0"
     }
 }

@@ -42,6 +42,12 @@ class DoctorController extends Controller
         ]);
         $doctor->save();
         if($request->hasFile('file')){
+//            $image = $request->file('file');
+//            $img = Image::make($image->getRealPath());
+//            $img->resize(100, 100, function ($constraint) {
+//                $constraint->aspectRatio();
+//            })->save('/aaaaaa.jpg');
+//            $path = $request->img->storeAs('doctors', $doctor->id.'xxxxxxxxxxxx.jpg');
             $path = $request->file->storeAs('doctors', $doctor->id.'.jpg');
             return $path;
         }

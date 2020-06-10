@@ -25,7 +25,8 @@ class SpecialtyController extends Controller
     public function store(Request $request)
     {
         $specialty=new Specialty([
-            "name"=>$request->get("name")
+            "name"=>$request->get("name"),
+            "color"=>$request->get("color")
         ]);
         $specialty->save();
         return $specialty;

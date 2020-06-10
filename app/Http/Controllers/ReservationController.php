@@ -16,7 +16,7 @@ class ReservationController extends Controller
      */
     public function index()
     {
-        return Reservation::select('reservations.id',DB::raw("CONCAT ('Doc: ',doctors.name,'\nEsp. ',specialtys.name) as title"),'start','end')
+        return Reservation::select('reservations.id',DB::raw("CONCAT ('Doc: ',doctors.name,'\nEsp. ',specialtys.name) as title"),'start','end','color')
             ->join('doctors','doctor_id','=','doctors.id')
             ->join('specialtys','specialty_id','=','specialtys.id')
             ->get();
@@ -30,7 +30,7 @@ class ReservationController extends Controller
      */
     public function create()
     {
-        //
+
     }
 
     /**
@@ -41,7 +41,15 @@ class ReservationController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $reservation= new Reservation([
+            'start'=>date($request->get('start')),
+            'end'=>date($request->get('end')),
+            'doctor_id'=>$request->get('doctor_id'),
+            'specialty_id'=>$request->get('specialty_id'),
+        ]);
+        $reservation->save();
+//        return $reservation;
+        return $reservation;
     }
 
     /**

@@ -2,11 +2,17 @@ require('./bootstrap');
 // window.Vue = require('vue');
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-require('vue-select-image/dist/vue-select-image.css');
+
+
 Vue.use(VueRouter);
 import vSelect from 'vue-select';
 import 'vue-select/dist/vue-select.css';
 Vue.component('v-select', vSelect);
+
+import VueSelectImage from 'vue-select-image'
+
+require('vue-select-image/dist/vue-select-image.css');
+Vue.use(VueSelectImage)
 
 // const files = require.context('./', true, /\.vue$/i)
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
@@ -20,8 +26,7 @@ import Reservad from './components/Reservad';
 import Reservae from './components/Reservae';
 import Doctor from './components/Doctor';
 import Especialidad from './components/Especialidad';
-import VueSelectImage from 'vue-select-image'
-Vue.use(VueSelectImage)
+
 const router=new VueRouter({
     mode:'history',
     routes:[

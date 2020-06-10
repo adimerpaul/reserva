@@ -4,7 +4,8 @@
         <button type="button" class="btn btn-success m-2" data-toggle="modal" data-target="#exampleModal">
             <i class="fa fa-users-cog"></i> Crear Especialidad
         </button>
-
+<!--        <input type="color" v-model="specialty.color">-->
+<!--        {{specialty}}-->
         <!-- Modal -->
         <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg" role="document">
@@ -22,6 +23,10 @@
                                 <div class="col-sm-10">
                                     <input type="text" v-model="specialty.name" class="form-control" id="name" placeholder="Name" required>
                                 </div>
+                                <label for="color" class="col-sm-2 col-form-label">Color</label>
+                                <div class="col-sm-10">
+                                    <input type="color" v-model="specialty.color" class="form-control" id="color" placeholder="Color" required>
+                                </div>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-trash"></i> Cancelar</button>
@@ -36,12 +41,14 @@
         <table class="table">
             <tr>
                 <th>Id</th>
-                <th>name</th>
-                <th>options</th>
+                <th>Nombre</th>
+                <th>Color</th>
+                <th>Options</th>
             </tr>
             <tr v-for="(item,index) in specialtys" :key="index">
                 <td>{{item.id}}</td>
                 <td>{{item.name}}</td>
+                <td> <div class="bg text-center" :style="{background:item.color}">Color</div></td>
                 <td>
                     <button type="button" class="btn btn-warning p-1 m-0" data-toggle="modal" data-target="#update" @click="datact(item)"><i class="fa fa-edit"></i> Actuali</button>
                     <button class="btn btn-danger p-1 m-0" @click="Borrar(item.id)"><i class="fa fa-trash"></i> Borrar</button>

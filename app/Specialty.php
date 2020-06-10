@@ -6,6 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Specialty extends Model
 {
-    protected $fillable=['name'];
+    protected $fillable=['name','color'];
     protected $table = 'specialtys';
 }

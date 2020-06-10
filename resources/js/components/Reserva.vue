@@ -223,7 +223,7 @@
                     id: 45,
                     title: "Doc: Anacleto valle copa Esp. Ginecología y obstetricia",
                     start: "2020-06-09 10:00:00",
-                    end: "2020-06-09 10:30:00"
+                    end: "2020-06-09 10:30:00",
                     // allDay: true
                 });
             },
@@ -280,7 +280,8 @@
                                 id: res.id,
                                 title: res.title,
                                 start: res.start,
-                                end: res.end
+                                end: res.end,
+                                color:res.color
                                 // allDay: true
                             });
                             // console.log(res);

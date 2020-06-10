@@ -2755,7 +2755,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                       id: res.id,
                       title: res.title,
                       start: res.start,
-                      end: res.end // allDay: true
+                      end: res.end,
+                      color: res.color // allDay: true
 
                     }); // console.log(res);
 

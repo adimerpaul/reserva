@@ -2681,6 +2681,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       // console.log('fire event onSelectImage: ', data.id)
       this.iddoctor = data.id; // this.imageSelected = data
     },
+    ShowEs: function ShowEs(item) {
+      console.log(item);
+    },
     Create: function () {
       var _Create = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2() {
         var _this2 = this;
@@ -2690,8 +2693,11 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
+                jquery__WEBPACK_IMPORTED_MODULE_2___default()('#exampleModal').modal('hide'); // toastr.info('Creando reservas!');
+                // console.log('a');
+
                 if (!(this.fecha2 >= this.fecha1 && moment__WEBPACK_IMPORTED_MODULE_1___default()(this.horafinal, 'HH:mm') > moment__WEBPACK_IMPORTED_MODULE_1___default()(this.horainicio, 'HH:mm') && this.iddoctor != "")) {
-                  _context2.next = 16;
+                  _context2.next = 17;
                   break;
                 }
 
@@ -2701,9 +2707,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 diffdias = f2.diff(f1, 'days');
                 i = 0;
 
-              case 5:
+              case 6:
                 if (!(i <= diffdias)) {
-                  _context2.next = 13;
+                  _context2.next = 14;
                   break;
                 }
 
@@ -2715,7 +2721,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                   doctor_id: this.iddoctor,
                   specialty_id: this.selected.code
                 };
-                _context2.next = 9;
+                _context2.next = 10;
                 return axios.post('/reservation', datos).then(function (res) {// console.log(res.data);
                   // this.calendar.removeAllEvents();
                   // this.calendar.addEvent({
@@ -2737,15 +2743,15 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                   // });
                 });
 
-              case 9:
+              case 10:
                 f1.add(1, "days");
 
-              case 10:
+              case 11:
                 i++;
-                _context2.next = 5;
+                _context2.next = 6;
                 break;
 
-              case 13:
+              case 14:
                 axios.get('./reservation').then(function (res) {
                   // console.log(res.data);
                   _this2.calendar.removeAllEvents();
@@ -2761,7 +2767,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                     }); // console.log(res);
 
                   });
-                  jquery__WEBPACK_IMPORTED_MODULE_2___default()('#exampleModal').modal('hide');
                 }); // while (f1!=f2){
                 //     f1.add(1,"days");
                 //     console.log(f1.format('YYYY-MM-DD'));
@@ -2770,13 +2775,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 //     console.log(res);
                 // })
 
-                _context2.next = 17;
+                _context2.next = 18;
                 break;
 
-              case 16:
+              case 17:
                 alert('Error al seleccionar datos');
 
-              case 17:
+              case 18:
               case "end":
                 return _context2.stop();
             }
@@ -61901,7 +61906,12 @@ var render = function() {
               key: index,
               staticClass: "btn",
               style: { background: item.color, color: "black" },
-              attrs: { type: "button" }
+              attrs: { type: "button" },
+              on: {
+                click: function($event) {
+                  return _vm.ShowEs(item)
+                }
+              }
             },
             [
               _vm._v(

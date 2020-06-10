@@ -29,7 +29,9 @@
     <script src='../packages/list/main.js'></script>
 
     <link rel="stylesheet" type="text/css" href="dataTables/datatables.min.css"/>
+    <link rel="stylesheet" href="toastr/toastr.min.css">
     <!-- Scripts -->
+    <link rel="stylesheet" href="toastr/toastr.min.js">
     <script src="{{ asset('js/app.js') }}" defer></script>
     <script src="{{ asset('js/moment.js') }}" defer></script>
 

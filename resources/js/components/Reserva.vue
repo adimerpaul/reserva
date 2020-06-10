@@ -19,7 +19,7 @@
                 </button>
             </div>
             <div class="col-sm-11" >
-                <button v-for="(item,index) in specialtys" :key="index" :style="{background:item.color,color:'black'}" type="button" class="btn">
+                <button v-for="(item,index) in specialtys" :key="index" :style="{background:item.color,color:'black'}" @click="ShowEs(item)"  type="button" class="btn">
                     {{item.name}}
                 </button>
             </div>
@@ -232,11 +232,16 @@
                 this.iddoctor=data.id
                 // this.imageSelected = data
             },
+            ShowEs:function(item){
+                console.log(item);
+            },
             Create: async function () {
+                $('#exampleModal').modal('hide');
+                // toastr.info('Creando reservas!');
                 // console.log('a');
+
                 if (this.fecha2 >= this.fecha1 && moment(this.horafinal, 'HH:mm') > moment(this.horainicio, 'HH:mm') && this.iddoctor != "") {
                     // console.log(moment(this.horainicio, 'HH:mm').format('HH:mm:ss'));
-
                     let f1 = moment(this.fecha1, 'YYYY-MM-DD');
                     let f2 = moment(this.fecha2, 'YYYY-MM-DD');
                     let diffdias = f2.diff(f1, 'days');
@@ -286,7 +291,7 @@
                             });
                             // console.log(res);
                         });
-                        $('#exampleModal').modal('hide');
+
                     });
                     // while (f1!=f2){
                     //     f1.add(1,"days");

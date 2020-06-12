@@ -18,6 +18,7 @@ class CreateReservationsTable extends Migration
             $table->dateTime('start');
             $table->dateTime('end');
             $table->string('estado')->default('creado');
+            $table->string('reservado')->default('');
             $table->unsignedBigInteger('doctor_id');
             $table->foreign('doctor_id')->references('id')->on('doctors');
             $table->unsignedBigInteger('specialty_id');

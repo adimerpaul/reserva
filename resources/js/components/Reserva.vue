@@ -20,7 +20,7 @@
 <!--                <button class="btn btn-dark" @click="eli">click</button>-->
             </div>
             <div class="col-sm-11" >
-                <button  type="button" @click="All" class="btn btn-dark">
+                <button  type="button" @click="All" class="btn btn-dark p-0 m-0">
                     Todos
                 </button>
                 <button v-for="(item,index) in specialtys" :key="index" :style="{background:item.color,color:'black'}" @click="ShowEs(item)"  type="button" class="btn p-0 m-0">
@@ -53,13 +53,16 @@
                                 <div class="col-sm-10">
                                     <input type="text" readonly class="form-control-plaintext" id="fin" v-model="evento.end">
                                 </div>
+                                <label for="reservado" class="col-sm-4 col-form-label">Reservado Para</label>
+                                <div class="col-sm-8">
+                                    <input type="text" readonly class="form-control-plaintext" id="reservado" v-model="evento.reservado">
+                                </div>
                             </div>
-                            {{evento}}
                         </form>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-eye"></i> Ocultar</button>
-                        <button type="button" class="btn btn-danger"><i class="fa fa-trash"></i> Eliminar</button>
+                        <button type="button" class="btn btn-danger" @click="DeleteEvent"><i class="fa fa-trash"></i> Eliminar</button>
                     </div>
                 </div>
             </div>
@@ -126,7 +129,17 @@
             </div>
         </div>
 
-        <div id='calendar'></div>
+<!--        <div id='calendar'></div>-->
+        <FullCalendar
+            :plugins="calendarPlugins"
+            :events="reservation"
+            :selectable="true"
+            default-view="timeGridWeek"
+            locale="es"
+            @select="handleSelect"
+            @clickDate="handleDateClick"
+            @eventClick="handleDateClick"
+        />
 
     </div>
 </template>
@@ -145,6 +158,10 @@
         },
         data(){
             return {
+                events: [
+                    {title: 'My Event',start: '2020-06-12'}
+                    ]
+                ,
                 options: [
                     // 'foo',
                     // 'bar',
@@ -162,7 +179,8 @@
                 calendar:'',
                 fecha1:moment().format('YYYY-MM-DD'),
                 fecha2:moment().add(6,'days').format('YYYY-MM-DD'),
-                dataImages:[]
+                dataImages:[],
+                calendarPlugins: [ dayGridPlugin,interactionPlugin,timeGridPlugin ]
             }
         },
         computed: {
@@ -176,9 +194,8 @@
             // }
         },
         mounted: function () {
-
+            moment.locale('es');
             // console.log(moment().format());
-
             // console.log();
             axios.get('./specialtys').then(res => {
                 this.specialtys = res.data;
@@ -188,9 +205,10 @@
                     this.options.push({title: res.name, code: res.id});
                 });
             });
-            axios.get('./reservation').then(res => {
-                // console.log(res.data);
-                this.reservation = res.data;
+            this.Datos();
+            // axios.get('./reservation').then(res => {
+            //     // console.log(res.data);
+            //     this.reservation = res.data;
                 // var calendarEl = document.getElementById('calendar');
                 // this.calendar = new FullCalendar.Calendar(calendarEl, {
                 //     plugins: ['interaction', 'dayGrid', 'timeGrid', 'list'],
@@ -218,7 +236,7 @@
                 // });
                 // this.calendar.render();
 
-            })
+            // });
             axios.get('/doctors').then(res => {
                 // console.log(res);
                 res.data.forEach(res => {
@@ -239,6 +257,7 @@
                 // let event = this.calendar.getEventById('2');
                 // alert("Are You Remove Event "+event.title);
                 // event.remove();
+                this.reservation=[];
 
                 // var eventSources = this.calendar.getEventSources();
                 //
@@ -262,40 +281,73 @@
                 this.iddoctor=data.id
                 // this.imageSelected = data
             },
-            ShowEs:function(item){
-
-                this.calendar.removeAllEvents();
-                axios.get('./reservation').then(res=>{
-                    res.data.forEach(res=>{
-                        if (res.specialty_id==item.id){
-                            this.calendar.addEvent({
-                                id: res.id,
-                                title: res.title,
-                                start: res.start,
-                                end: res.end,
-                                color:res.color
-                            });
+            ShowEs: async function (item) {
+                this.$loading(true);
+                this.reservation = [];
+                await axios.get('./reservation').then(res => {
+                    res.data.forEach(res => {
+                        if (res.specialty_id == item.id) {
+                            this.reservation.push(res);
                         }
                     });
-                    // this.$loading(false);
                 });
+                this.$loading(false);
+                // this.calendar.removeAllEvents();
+                // axios.get('./reservation').then(res=>{
+                //     res.data.forEach(res=>{
+                //         if (res.specialty_id==item.id){
+                //             this.calendar.addEvent({
+                //                 id: res.id,
+                //                 title: res.title,
+                //                 start: res.start,
+                //                 end: res.end,
+                //                 color:res.color
+                //             });
+                //         }
+                //     });
+                //     // this.$loading(false);
+                // });
             },
-            All:function(){
+            handleDateClick(e){
+                // console.log(e.event._def.extendedProps.reservado);
+                this.evento.title=e.event.title;
+                this.evento.id=e.event.id;
+                this.evento.reservado=e.event.reservado;
+                this.evento.start= moment( e.event.start).format('LLLL');
+                // this.evento.end= moment( e.event.end).format('YYYY-MM-DD  h:mm:ss a');
+                this.evento.end=moment(e.event.end).format('LLLL');;
+                // this.evento=e.event;
+                $('#show').modal('show');
+
+            },
+            handleSelect(e){
+                console.log(e);
+            },
+            All:async function(){
+                // console.log('a');
                 this.$loading(true);
-                this.calendar.removeAllEvents();
-                axios.get('./reservation').then(res=>{
-                    res.data.forEach(res=>{
-                        // if (res.id==item.id){
-                            this.calendar.addEvent({
-                                id: res.id,
-                                title: res.title,
-                                start: res.start,
-                                end: res.end,
-                                color:res.color
-                            });
-                        // }
-                    });
-                    this.$loading(false);
+                await this.Datos();
+                this.$loading(false);
+                // this.calendar.removeAllEvents();
+                // axios.get('./reservation').then(res=>{
+                //     res.data.forEach(res=>{
+                //         // if (res.id==item.id){
+                //             this.calendar.addEvent({
+                //                 id: res.id,
+                //                 title: res.title,
+                //                 start: res.start,
+                //                 end: res.end,
+                //                 color:res.color
+                //             });
+                //         // }
+                //     });
+                //     this.$loading(false);
+                // });
+            },
+            Datos:async function(){
+                this.reservation=[];
+                await axios.get('./reservation').then(res => {
+                    this.reservation = res.data;
                 });
             },
             Create: async function () {
@@ -303,7 +355,6 @@
                 toastr.info('Se estan creando las reservas!');
                 this.$loading(true);
                 // console.log('a');
-
                 if (this.fecha2 >= this.fecha1 && moment(this.horafinal, 'HH:mm') > moment(this.horainicio, 'HH:mm') && this.iddoctor != "") {
                     // console.log(moment(this.horainicio, 'HH:mm').format('HH:mm:ss'));
                     let f1 = moment(this.fecha1, 'YYYY-MM-DD');
@@ -341,22 +392,24 @@
                         })
                         f1.add(1, "days");
                     }
-                    axios.get('./reservation').then(res=>{
-                        // console.log(res.data);
-                        this.calendar.removeAllEvents();
-                        res.data.forEach(res=>{
-                            this.calendar.addEvent({
-                                id: res.id,
-                                title: res.title,
-                                start: res.start,
-                                end: res.end,
-                                color:res.color
-                                // allDay: true
-                            });
-                            // console.log(res);
-                        });
-                        this.$loading(false);
-                    });
+                    await this.Datos();
+                    this.$loading(false);
+                    // axios.get('./reservation').then(res=>{
+                    //     // console.log(res.data);
+                    //     this.calendar.removeAllEvents();
+                    //     res.data.forEach(res=>{
+                    //         this.calendar.addEvent({
+                    //             id: res.id,
+                    //             title: res.title,
+                    //             start: res.start,
+                    //             end: res.end,
+                    //             color:res.color
+                    //             // allDay: true
+                    //         });
+                    //         // console.log(res);
+                    //     });
+                    //     this.$loading(false);
+                    // });
                     // while (f1!=f2){
                     //     f1.add(1,"days");
                     //     console.log(f1.format('YYYY-MM-DD'));
@@ -366,6 +419,16 @@
                     // })
                 } else {
                     alert('Error al seleccionar datos');
+                }
+            },
+            DeleteEvent(){
+                // console.log(this.evento.id);
+                if(confirm("Seguro de eliminar?")){
+                    axios.delete('/reservation/'+this.evento.id).then(res=>{
+                        // console.log('Eliminado Correctamente');
+                        this.Datos();
+                        $('#show').modal('hide');
+                    });
                 }
             }
 

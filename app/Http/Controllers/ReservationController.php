@@ -16,7 +16,7 @@ class ReservationController extends Controller
      */
     public function index()
     {
-        return Reservation::select('reservations.id',DB::raw("CONCAT ('Doc: ',doctors.name,'\nEsp. ',specialtys.name) as title"),'start','end','color')
+        return Reservation::select('reservations.id',DB::raw("CONCAT ('Doc: ',doctors.name,'\nEsp. ',specialtys.name) as title"),'start','end','color','specialty_id')
             ->join('doctors','doctor_id','=','doctors.id')
             ->join('specialtys','specialty_id','=','specialtys.id')
             ->get();

@@ -17,14 +17,53 @@
                 <button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModal">
                     <i class="fa fa-plus-circle"></i> Crear
                 </button>
+<!--                <button class="btn btn-dark" @click="eli">click</button>-->
             </div>
             <div class="col-sm-11" >
-                <button v-for="(item,index) in specialtys" :key="index" :style="{background:item.color,color:'black'}" @click="ShowEs(item)"  type="button" class="btn">
+                <button  type="button" @click="All" class="btn btn-dark">
+                    Todos
+                </button>
+                <button v-for="(item,index) in specialtys" :key="index" :style="{background:item.color,color:'black'}" @click="ShowEs(item)"  type="button" class="btn p-0 m-0">
                     {{item.name}}
                 </button>
             </div>
         </div>
-
+        <!-- Modal -->
+        <div class="modal fade" id="show" tabindex="-1" role="dialog" aria-labelledby="showLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="showLabel"><i class="fa fa-edit"></i> Reserva</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="form-group row">
+                                <label for="titulo" class="col-sm-2 col-form-label">Titulo</label>
+                                <div class="col-sm-10">
+                                    <input type="text" readonly class="form-control-plaintext" id="titulo" v-model="evento.title">
+                                </div>
+                                <label for="inicio" class="col-sm-2 col-form-label">Inicio</label>
+                                <div class="col-sm-10">
+                                    <input type="text" readonly class="form-control-plaintext" id="inicio" v-model="evento.start">
+                                </div>
+                                <label for="fin" class="col-sm-2 col-form-label">Fin</label>
+                                <div class="col-sm-10">
+                                    <input type="text" readonly class="form-control-plaintext" id="fin" v-model="evento.end">
+                                </div>
+                            </div>
+                            {{evento}}
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-eye"></i> Ocultar</button>
+                        <button type="button" class="btn btn-danger"><i class="fa fa-trash"></i> Eliminar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <!-- Modal -->
         <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg" role="document">
@@ -95,8 +134,15 @@
 <script>
     import moment from "moment";
     import $ from "jquery";
-    export default {
+    import FullCalendar from '@fullcalendar/vue'
+    import dayGridPlugin from '@fullcalendar/daygrid'
+    import timeGridPlugin from '@fullcalendar/timegrid'
+    import interactionPlugin from '@fullcalendar/interaction'
 
+    export default {
+        components: {
+            FullCalendar // make the <FullCalendar> tag available
+        },
         data(){
             return {
                 options: [
@@ -106,35 +152,17 @@
                 ],
                 reservation:[],
                 doctors:[],
+                evento:{title:'aaa'},
                 specialtys:[],
                 especialidad:'',
                 iddoctor:0,
                 selected:false,
                 horainicio:'10:00',
                 horafinal:'10:30',
-                // calendarEl:'',
                 calendar:'',
                 fecha1:moment().format('YYYY-MM-DD'),
                 fecha2:moment().add(6,'days').format('YYYY-MM-DD'),
-                dataImages:[
-                // {
-                //     id: '1',
-                //     src: 'https://unsplash.it/50?random',
-                //     alt: 'Alt Image 1'
-                // }, {
-                //     id: '2',
-                //     src: 'https://unsplash.it/50?random',
-                //     alt: 'Alt Image 2'
-                // }, {
-                //     id: '3',
-                //     src: 'https://unsplash.it/50?random',
-                //     alt: 'Alt Image 3'
-                // }, {
-                //     id: '4',
-                //     src: 'https://unsplash.it/50?random',
-                //     alt: 'Alt Image 4'
-                // }
-                ]
+                dataImages:[]
             }
         },
         computed: {
@@ -147,65 +175,66 @@
             //     // }
             // }
         },
-        mounted() {
+        mounted: function () {
 
             // console.log(moment().format());
 
-
             // console.log();
-            axios.get('./specialtys').then(res=>{
-                this.specialtys=res.data;
-                this.specialtys.forEach(res=>{
+            axios.get('./specialtys').then(res => {
+                this.specialtys = res.data;
+                this.specialtys.forEach(res => {
                     // console.log(res.name);
                     // res.name="";
-                    this.options.push({title:res.name,code: res.id});
+                    this.options.push({title: res.name, code: res.id});
                 });
             });
-            axios.get('./reservation').then(res=>{
+            axios.get('./reservation').then(res => {
                 // console.log(res.data);
-                this.reservation=res.data;
-                var calendarEl = document.getElementById('calendar');
-                this.calendar = new FullCalendar.Calendar(calendarEl, {
-                    plugins: [ 'interaction', 'dayGrid', 'timeGrid', 'list' ],
-                    header: {
-                        left: 'prev,next today',
-                        center: 'title',
-                        right: 'dayGridMonth,timeGridWeek'//,timeGridDay,listWeek'
-                    },
-                    defaultDate: moment().format('YYYY-MM-DD'),
-                    navLinks: true, // can click day/week names to navigate views
-                    defaultView:'timeGridWeek',
-                    weekNumbers: true,
-                    weekNumbersWithinDays: true,
-                    weekNumberCalculation: 'ISO',
-                    locale:'es',
-                    editable: false,
-                    eventLimit: true, // allow "more" link when too many events
-                    events: this.reservation,
-                    eventClick: function(info) {
-                        alert('Event: ' + info.event.title);
-                        alert('Coordinates: ' + info.jsEvent.pageX + ',' + info.jsEvent.pageY);
-                        alert('View: ' + info.view.type);
-                        // change the border color just for fun
-                        info.el.style.borderColor = 'red';
-                    }
-                });
-                this.calendar.render();
+                this.reservation = res.data;
+                // var calendarEl = document.getElementById('calendar');
+                // this.calendar = new FullCalendar.Calendar(calendarEl, {
+                //     plugins: ['interaction', 'dayGrid', 'timeGrid', 'list'],
+                //     header: {
+                //         left: 'prev,next today',
+                //         center: 'title',
+                //         right: 'dayGridMonth,timeGridWeek'//,timeGridDay,listWeek'
+                //     },
+                //     defaultDate: moment().format('YYYY-MM-DD'),
+                //     navLinks: true, // can click day/week names to navigate views
+                //     defaultView: 'timeGridWeek',
+                //     weekNumbers: true,
+                //     weekNumbersWithinDays: true,
+                //     weekNumberCalculation: 'ISO',
+                //     locale: 'es',
+                //     editable: false,
+                //     eventLimit: true, // allow "more" link when too many events
+                //     events: this.reservation,
+                //     eventClick: function (info) {
+                //         $('#show').modal('show');
+                //         // this.recuperar(info);
+                //         this.evento.title = "bbbb";
+                //     }
+                //
+                // });
+                // this.calendar.render();
 
             })
-            axios.get('/doctors').then(res=>{
+            axios.get('/doctors').then(res => {
                 // console.log(res);
-                res.data.forEach(res=>{
+                res.data.forEach(res => {
                     // console.log(res.name);
                     this.dataImages.push({
                         id: res.id,
-                        src: '/app/doctors/'+res.id+'.jpg',
-                        alt: res.name.substring(0,10)
+                        src: '/app/doctors/' + res.id + '.jpg',
+                        alt: res.name.substring(0, 10)
                     });
                 });
             })
         },
         methods:{
+            recuperar:function(info){
+                console.log(info)
+            },
             eli: async function () {
                 // let event = this.calendar.getEventById('2');
                 // alert("Are You Remove Event "+event.title);
@@ -218,14 +247,15 @@
                 //     await eventSources[i].remove();
                 //     console.log('a');
                 // }
-                this.calendar.removeAllEvents();
-                this.calendar.addEvent({
-                    id: 45,
-                    title: "Doc: Anacleto valle copa Esp. Ginecología y obstetricia",
-                    start: "2020-06-09 10:00:00",
-                    end: "2020-06-09 10:30:00",
-                    // allDay: true
-                });
+                // this.calendar.removeAllEvents();
+                // this.calendar.addEvent({
+                //     id: 45,
+                //     title: "Doc: Anacleto valle copa Esp. Ginecología y obstetricia",
+                //     start: "2020-06-09 10:00:00",
+                //     end: "2020-06-09 10:30:00",
+                //     // allDay: true
+                // });
+                // toastr.info('Creando reservas!');
             },
             onSelectImage: function (data) {
                 // console.log('fire event onSelectImage: ', data.id)
@@ -233,11 +263,45 @@
                 // this.imageSelected = data
             },
             ShowEs:function(item){
-                console.log(item);
+
+                this.calendar.removeAllEvents();
+                axios.get('./reservation').then(res=>{
+                    res.data.forEach(res=>{
+                        if (res.specialty_id==item.id){
+                            this.calendar.addEvent({
+                                id: res.id,
+                                title: res.title,
+                                start: res.start,
+                                end: res.end,
+                                color:res.color
+                            });
+                        }
+                    });
+                    // this.$loading(false);
+                });
+            },
+            All:function(){
+                this.$loading(true);
+                this.calendar.removeAllEvents();
+                axios.get('./reservation').then(res=>{
+                    res.data.forEach(res=>{
+                        // if (res.id==item.id){
+                            this.calendar.addEvent({
+                                id: res.id,
+                                title: res.title,
+                                start: res.start,
+                                end: res.end,
+                                color:res.color
+                            });
+                        // }
+                    });
+                    this.$loading(false);
+                });
             },
             Create: async function () {
                 $('#exampleModal').modal('hide');
-                // toastr.info('Creando reservas!');
+                toastr.info('Se estan creando las reservas!');
+                this.$loading(true);
                 // console.log('a');
 
                 if (this.fecha2 >= this.fecha1 && moment(this.horafinal, 'HH:mm') > moment(this.horainicio, 'HH:mm') && this.iddoctor != "") {
@@ -291,7 +355,7 @@
                             });
                             // console.log(res);
                         });
-
+                        this.$loading(false);
                     });
                     // while (f1!=f2){
                     //     f1.add(1,"days");

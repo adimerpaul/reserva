@@ -31,13 +31,13 @@
     <link rel="stylesheet" type="text/css" href="dataTables/datatables.min.css"/>
     <link rel="stylesheet" href="toastr/toastr.min.css">
     <!-- Scripts -->
-    <link rel="stylesheet" href="toastr/toastr.min.js">
+
     <script src="{{ asset('js/app.js') }}" defer></script>
     <script src="{{ asset('js/moment.js') }}" defer></script>
 
     <script type="text/javascript" src="js/jquery-3.5.1.js" defer></script>
     <script type="text/javascript" src="dataTables/datatables.min.js" defer></script>
-
+    <script src="toastr/toastr.min.js" defer></script>
 </head>
 <body>
     <div id="app">

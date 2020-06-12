@@ -13,6 +13,9 @@ import VueSelectImage from 'vue-select-image'
 require('vue-select-image/dist/vue-select-image.css');
 Vue.use(VueSelectImage)
 
+import VueLoading from 'vuejs-loading-plugin'
+Vue.use(VueLoading)
+// this.$loading(true)
 // const files = require.context('./', true, /\.vue$/i)
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
 
@@ -25,6 +28,9 @@ import Reservad from './components/Reservad';
 import Reservae from './components/Reservae';
 import Doctor from './components/Doctor';
 import Especialidad from './components/Especialidad';
+
+
+
 
 const router=new VueRouter({
     mode:'history',

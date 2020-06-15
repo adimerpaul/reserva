@@ -17,6 +17,8 @@ class CreateSpecialtysTable extends Migration
             $table->id();
             $table->string('name');
             $table->string('color');
+            $table->string('descripcion');
+            $table->string('estado')->default('ACTIVO');
             $table->timestamps();
         });
     }

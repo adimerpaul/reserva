@@ -16839,6 +16839,46 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   created: function created() {},
@@ -16852,10 +16892,40 @@ __webpack_require__.r(__webpack_exports__);
     this.datos();
   },
   methods: {
+    subirfoto: function subirfoto() {
+      // alert('aa') ;
+      jquery__WEBPACK_IMPORTED_MODULE_0___default()('#avatar').attr('src', '/img/virus.png');
+      var data = new FormData();
+      data.append('file', document.getElementById('file').files[0]);
+      axios.post('/subir', data).then(function (res) {
+        // alert('a');
+        jquery__WEBPACK_IMPORTED_MODULE_0___default()('#avatar').attr('src', '/app/' + res.data);
+      });
+      return false;
+      e.preventDefault();
+    },
+    subirfoto2: function subirfoto2() {
+      // alert('aa') ;
+      jquery__WEBPACK_IMPORTED_MODULE_0___default()('#avatar2').attr('src', '/img/virus.png');
+      var data = new FormData();
+      data.append('file', document.getElementById('file2').files[0]);
+      axios.post('/subir', data).then(function (res) {
+        // alert('a');
+        jquery__WEBPACK_IMPORTED_MODULE_0___default()('#avatar2').attr('src', '/app/' + res.data);
+      });
+      return false;
+      e.preventDefault();
+    },
     Guardar: function Guardar() {
       var _this = this;
 
-      axios.post('/specialtys', this.specialty).then(function (res) {
+      // console.log(this.specialty)
+      var data = new FormData();
+      data.append('file', document.getElementById('file').files[0]);
+      data.append('name', this.specialty.name);
+      data.append('descripcion', this.specialty.descripcion);
+      data.append('color', this.specialty.color);
+      axios.post('/specialtys', data).then(function (res) {
         // console.log(res);
         jquery__WEBPACK_IMPORTED_MODULE_0___default()('#exampleModal').modal('hide');
 
@@ -16888,12 +16958,18 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     datact: function datact(item) {
-      this.specialty = item;
+      this.specialty = item; // console.log(this.specialty);
     },
     Modificar: function Modificar() {
       var _this4 = this;
 
-      axios.put('/specialtys/' + this.specialty.id, this.specialty).then(function (res) {
+      var data = new FormData();
+      data.append('file', document.getElementById('file2').files[0]);
+      data.append('name', this.specialty.name);
+      data.append('descripcion', this.specialty.descripcion);
+      data.append('color', this.specialty.color);
+      data.append('estado', this.specialty.estado);
+      axios.post('/specialtyUpdate/' + this.specialty.id, data).then(function (res) {
         // console.log(res);
         jquery__WEBPACK_IMPORTED_MODULE_0___default()('#update').modal('hide');
 
@@ -17640,10 +17716,113 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
+  data: function data() {
+    return {
+      especialidades: [],
+      reservations: [{
+        fecha: '01/01/2000',
+        datos: [{
+          hora: '8:00 am a 10:00 am'
+        }, {
+          hora: '8:00 am a 10:00 am'
+        }, {
+          hora: '8:00 am a 10:00 am'
+        }]
+      }, {
+        fecha: '02/01/2000'
+      }, {
+        fecha: '03/01/2000'
+      }, {
+        fecha: '04/01/2000'
+      }]
+    };
+  },
   mounted: function mounted() {
-    console.log('reserva especialidad mounted.');
-  }
+    var _this = this;
+
+    // console.log('reserva especialidad mounted.')
+    axios.get('/specialtys').then(function (res) {
+      // this.especialidades=res.data;
+      // this.especialidades.forEach(res=>{
+      //     // this.especialidades.descripcion="aaa";
+      //     console.log();
+      // })
+      res.data.forEach(function (res) {
+        // console.log(res);
+        if (res.estado == 'ACTIVO') {
+          _this.especialidades.push(res);
+        } // console.log();
+
+      }); // console.log(this.especialidades);
+    });
+  },
+  methods: {
+    Search: function Search(item) {
+      var _this2 = this;
+
+      // console.log(item.id)
+      axios.get('/reservation').then(function (res) {
+        // console.log(res)
+        // this.reservations=[];
+        res.data.forEach(function (dat) {
+          if (dat.specialty_id == item.id) {
+            // console.log( moment(dat.start).format('YYYY-MM-DD') );
+            var fecha = moment(dat.start).format('YYYY-MM-DD'); // this.reservations.push(dat);
+
+            var found = _this2.reservations.findIndex(function (e) {
+              return e.fecha == fecha;
+            });
+
+            console.log(found); // if(found==-1){
+            //     this.reservations.push({fecha:fecha})
+            // }else {
+            //     // this.reservations.fecha.push({fecha:fecha})
+            //
+            // }
+          }
+        });
+      });
+    }
+  } // created() {
+  //
+  // }
+
 });
 
 /***/ }),
@@ -22166,7 +22345,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.card-small {\n    /* border: 1px solid red; */\n    display: grid;\n    grid-template-columns: 1fr 1fr;\n    grid-row-gap: 1em;\n    border:1px solid #D0D0D0;\n    border-radius: 8px;\n    padding: 1.7em;\n}\n.card-small p {\n    margin: 0;\n    padding: 0;\n}\n.card-small-views {\n    /* border: 1px solid green; */\n    /*font-weight: bold;*/\n    font-size: .9em;\n}\n.card-small-icon {\n    /* border: 1px solid orange; */\n    text-align: right;\n}\n.card-small-icon img{\n    border-radius:50%;\n}\n.grid {\n    display: grid;\n    grid-row-gap: 25px;\n}\n", ""]);
+exports.push([module.i, "\n.eventos{\n    padding: 0px;\n    margin: 0px;\n    list-style: none;\n}\n.eventos li{\n    color: black;\n    margin: 0px;\n    padding: 0px;\n    border: 1px solid #D0D0D0;\n    font-size: 0.9em;\n    margin-top: 10px;\n    text-align: center;\n}\n.eventos li:hover{\n    background: rgba(0,0,0,0.7);\n    color: white;\n}\n.card-small {\n    /* border: 1px solid red; */\n    display: grid;\n    grid-template-columns: 1fr 1fr;\n    /*grid-row-gap: 0em;*/\n    border:1px solid #D0D0D0;\n    border-radius: 8px;\n    padding: 1em;\n}\n.card-small p {\n    margin: 0;\n    padding: 0;\n}\n.card-small-views {\n     /*border: 1px solid green;*/\n    /*font-weight: bold;*/\n    font-size: .9em;\n}\n.card-small-icon {\n    /*border: 1px solid orange;*/\n    text-align: right;\n}\n.card-small-icon img{\n    border-radius:50%;\n    border: 3px solid #D0D0D0;\n}\n.card-foo{\n    /*border: 1px solid blue;*/\n    grid-column-start: 1;\n    grid-column-end: 3;\n    border-bottom: 1px solid #D0D0D0;\n}\n.card-btn{\n    /*margin: 100px;*/\n    /*padding: 100px;*/\n    /*border:1px solid blue;*/\n    padding-top: 10em;\n    /*margin-top: 10em;*/\n    text-align: center;\n    grid-column-start: 1;\n    grid-column-end: 3;\n}\n.card-btn button{\n    margin-top: 0.2em;\n    /*color: red;*/\n}\n.grid {\n    display: grid;\n    grid-gap: 1em;\n}\n.grid2 {\n    display: grid;\n    grid-gap: 1em;\n}\n@media screen and (min-width: 480px) {\n.grid {\n        grid-template-columns: 1fr 1fr;\n}\n.grid2 {\n        grid-template-columns: 1fr 1fr;\n}\n    /*.wrapper {*/\n    /*    max-width: 1440px;*/\n    /*    margin: auto;*/\n    /*}*/\n}\n@media screen and (min-width: 768px) {\n.grid {\n        grid-template-columns: 1fr 1fr 1fr;\n}\n.grid2 {\n        grid-template-columns: 1fr 1fr ;\n}\n}\n@media screen and (min-width: 1024px) {\n.grid {\n        grid-template-columns: 1fr 1fr 1fr 1fr;\n}\n.grid2 {\n        grid-template-columns: 1fr 1fr 1fr 1fr;\n}\n    /*.header-total {*/\n    /*    border: none;*/\n    /*}*/\n    /*.header-grid {*/\n    /*    display: grid;*/\n    /*    grid-template-columns: 1fr 200px;*/\n    /*}*/\n}\n", ""]);
 
 // exports
 
@@ -76453,10 +76632,76 @@ var render = function() {
                             }
                           }
                         })
-                      ])
+                      ]),
+                      _vm._v(" "),
+                      _c(
+                        "label",
+                        {
+                          staticClass: "col-sm-2 col-form-label",
+                          attrs: { for: "descripcion" }
+                        },
+                        [_vm._v("Descripcion")]
+                      ),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "col-sm-10" }, [
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.specialty.descripcion,
+                              expression: "specialty.descripcion"
+                            }
+                          ],
+                          staticClass: "form-control",
+                          attrs: {
+                            type: "text",
+                            id: "descripcion",
+                            placeholder: "Descripcion",
+                            required: ""
+                          },
+                          domProps: { value: _vm.specialty.descripcion },
+                          on: {
+                            input: function($event) {
+                              if ($event.target.composing) {
+                                return
+                              }
+                              _vm.$set(
+                                _vm.specialty,
+                                "descripcion",
+                                $event.target.value
+                              )
+                            }
+                          }
+                        })
+                      ]),
+                      _vm._v(" "),
+                      _c(
+                        "label",
+                        {
+                          staticClass: "col-sm-2 col-form-label",
+                          attrs: { for: "file" }
+                        },
+                        [_vm._v("Fotografia")]
+                      ),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "col-sm-5" }, [
+                        _c("input", {
+                          staticClass: "form-control",
+                          attrs: {
+                            type: "file",
+                            id: "file",
+                            placeholder: "Color",
+                            required: ""
+                          },
+                          on: { change: _vm.subirfoto }
+                        })
+                      ]),
+                      _vm._v(" "),
+                      _vm._m(2)
                     ]),
                     _vm._v(" "),
-                    _vm._m(2)
+                    _vm._m(3)
                   ]
                 )
               ])
@@ -76470,13 +76715,36 @@ var render = function() {
       "table",
       { staticClass: "table" },
       [
-        _vm._m(3),
+        _vm._m(4),
         _vm._v(" "),
         _vm._l(_vm.specialtys, function(item, index) {
           return _c("tr", { key: index }, [
             _c("td", [_vm._v(_vm._s(item.id))]),
             _vm._v(" "),
             _c("td", [_vm._v(_vm._s(item.name))]),
+            _vm._v(" "),
+            _c("td", [_vm._v(_vm._s(item.descripcion))]),
+            _vm._v(" "),
+            _c("td", [
+              _c(
+                "div",
+                {
+                  staticClass: "badge",
+                  class:
+                    item.estado == "ACTIVO" ? "badge-success" : "badge-warning"
+                },
+                [_vm._v(_vm._s(item.estado))]
+              )
+            ]),
+            _vm._v(" "),
+            _c("td", [
+              _c("img", {
+                attrs: {
+                  src: "app/specialities/" + item.id + ".jpg",
+                  width: "25"
+                }
+              })
+            ]),
             _vm._v(" "),
             _c("td", [
               _c(
@@ -76545,7 +76813,7 @@ var render = function() {
           { staticClass: "modal-dialog", attrs: { role: "document" } },
           [
             _c("div", { staticClass: "modal-content" }, [
-              _vm._m(4),
+              _vm._m(5),
               _vm._v(" "),
               _c("div", { staticClass: "modal-body" }, [
                 _c(
@@ -76600,10 +76868,185 @@ var render = function() {
                             }
                           }
                         })
+                      ]),
+                      _vm._v(" "),
+                      _c(
+                        "label",
+                        {
+                          staticClass: "col-sm-2 col-form-label",
+                          attrs: { for: "color2" }
+                        },
+                        [_vm._v("Color")]
+                      ),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "col-sm-10" }, [
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.specialty.color,
+                              expression: "specialty.color"
+                            }
+                          ],
+                          staticClass: "form-control",
+                          attrs: {
+                            type: "color",
+                            id: "color2",
+                            placeholder: "Color",
+                            required: ""
+                          },
+                          domProps: { value: _vm.specialty.color },
+                          on: {
+                            input: function($event) {
+                              if ($event.target.composing) {
+                                return
+                              }
+                              _vm.$set(
+                                _vm.specialty,
+                                "color",
+                                $event.target.value
+                              )
+                            }
+                          }
+                        })
+                      ]),
+                      _vm._v(" "),
+                      _c(
+                        "label",
+                        {
+                          staticClass: "col-sm-2 col-form-label",
+                          attrs: { for: "descripcion2" }
+                        },
+                        [_vm._v("Descripcion")]
+                      ),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "col-sm-10" }, [
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.specialty.descripcion,
+                              expression: "specialty.descripcion"
+                            }
+                          ],
+                          staticClass: "form-control",
+                          attrs: {
+                            type: "text",
+                            id: "descripcion2",
+                            placeholder: "Descripcion",
+                            required: ""
+                          },
+                          domProps: { value: _vm.specialty.descripcion },
+                          on: {
+                            input: function($event) {
+                              if ($event.target.composing) {
+                                return
+                              }
+                              _vm.$set(
+                                _vm.specialty,
+                                "descripcion",
+                                $event.target.value
+                              )
+                            }
+                          }
+                        })
+                      ]),
+                      _vm._v(" "),
+                      _c(
+                        "label",
+                        {
+                          staticClass: "col-sm-2 col-form-label",
+                          attrs: { for: "estado2" }
+                        },
+                        [_vm._v("Estado")]
+                      ),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "col-sm-10" }, [
+                        _c(
+                          "select",
+                          {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.specialty.estado,
+                                expression: "specialty.estado"
+                              }
+                            ],
+                            staticClass: "form-control",
+                            attrs: {
+                              name: "estad",
+                              id: "estado2",
+                              required: ""
+                            },
+                            on: {
+                              change: function($event) {
+                                var $$selectedVal = Array.prototype.filter
+                                  .call($event.target.options, function(o) {
+                                    return o.selected
+                                  })
+                                  .map(function(o) {
+                                    var val = "_value" in o ? o._value : o.value
+                                    return val
+                                  })
+                                _vm.$set(
+                                  _vm.specialty,
+                                  "estado",
+                                  $event.target.multiple
+                                    ? $$selectedVal
+                                    : $$selectedVal[0]
+                                )
+                              }
+                            }
+                          },
+                          [
+                            _c("option", { attrs: { value: "ACTIVO" } }, [
+                              _vm._v("ACTIVO")
+                            ]),
+                            _vm._v(" "),
+                            _c("option", { attrs: { value: "INACTIVO" } }, [
+                              _vm._v("INACTIVO")
+                            ])
+                          ]
+                        )
+                      ]),
+                      _vm._v(" "),
+                      _c(
+                        "label",
+                        {
+                          staticClass: "col-sm-2 col-form-label",
+                          attrs: { for: "file2" }
+                        },
+                        [_vm._v("Fotografia")]
+                      ),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "col-sm-5" }, [
+                        _c("input", {
+                          staticClass: "form-control",
+                          attrs: {
+                            type: "file",
+                            id: "file2",
+                            placeholder: "Fotografia"
+                          },
+                          on: { change: _vm.subirfoto2 }
+                        })
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "col-sm-5" }, [
+                        _c("img", {
+                          attrs: {
+                            id: "avatar2",
+                            alt: "",
+                            width: "70",
+                            src: "app/specialities/" + _vm.specialty.id + ".jpg"
+                          }
+                        })
                       ])
                     ]),
                     _vm._v(" "),
-                    _vm._m(5)
+                    _vm._m(6)
                   ]
                 )
               ])
@@ -76643,7 +77086,10 @@ var staticRenderFns = [
       _c(
         "h5",
         { staticClass: "modal-title", attrs: { id: "exampleModalLabel" } },
-        [_vm._v("Crear especialidad")]
+        [
+          _c("i", { staticClass: "fa fa-plus-circle" }),
+          _vm._v(" Crear especialidad")
+        ]
       ),
       _vm._v(" "),
       _c(
@@ -76658,6 +77104,16 @@ var staticRenderFns = [
         },
         [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
       )
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "col-sm-5" }, [
+      _c("img", {
+        attrs: { src: "img/virus.png", id: "avatar", alt: "", width: "70" }
+      })
     ])
   },
   function() {
@@ -76689,6 +77145,12 @@ var staticRenderFns = [
       _c("th", [_vm._v("Id")]),
       _vm._v(" "),
       _c("th", [_vm._v("Nombre")]),
+      _vm._v(" "),
+      _c("th", [_vm._v("Descripcion")]),
+      _vm._v(" "),
+      _c("th", [_vm._v("Estado")]),
+      _vm._v(" "),
+      _c("th", [_vm._v("Foto")]),
       _vm._v(" "),
       _c("th", [_vm._v("Color")]),
       _vm._v(" "),
@@ -77521,31 +77983,175 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _vm._m(0)
+  return _c("div", { staticClass: "container" }, [
+    _c(
+      "div",
+      {
+        staticClass: "modal fade",
+        attrs: {
+          id: "exampleModalLong",
+          tabindex: "-1",
+          role: "dialog",
+          "aria-labelledby": "exampleModalLongTitle",
+          "aria-hidden": "true"
+        }
+      },
+      [
+        _c(
+          "div",
+          { staticClass: "modal-dialog modal-lg", attrs: { role: "document" } },
+          [
+            _c("div", { staticClass: "modal-content" }, [
+              _vm._m(0),
+              _vm._v(" "),
+              _c("div", { staticClass: "modal-body" }, [
+                _c(
+                  "div",
+                  { staticClass: "grid2" },
+                  [
+                    _vm._l(_vm.reservations, function(item, index) {
+                      return _c("div", { key: index }, [
+                        _c(
+                          "div",
+                          {
+                            staticClass: "card mb-3",
+                            staticStyle: { "max-width": "18rem" }
+                          },
+                          [
+                            _c(
+                              "div",
+                              {
+                                staticClass:
+                                  "card-header text-center text-white bg-dark"
+                              },
+                              [_vm._v("Jueves 20 de octubre")]
+                            ),
+                            _vm._v(" "),
+                            _c("div", [
+                              _c(
+                                "ul",
+                                { staticClass: "eventos" },
+                                _vm._l(item.datos, function(dat) {
+                                  return _c("li", [
+                                    _vm._v(
+                                      "\n                                                " +
+                                        _vm._s(dat.hora) +
+                                        "\n                                            "
+                                    )
+                                  ])
+                                }),
+                                0
+                              )
+                            ])
+                          ]
+                        )
+                      ])
+                    }),
+                    _vm._v(
+                      "\n                            " +
+                        _vm._s(_vm.reservations) +
+                        "\n                        "
+                    )
+                  ],
+                  2
+                )
+              ]),
+              _vm._v(" "),
+              _vm._m(1)
+            ])
+          ]
+        )
+      ]
+    ),
+    _vm._v(" "),
+    _c(
+      "div",
+      { staticClass: "grid" },
+      _vm._l(_vm.especialidades, function(item, index) {
+        return _c("div", { key: index, staticClass: "card-small" }, [
+          _c("p", { staticClass: "card-small-views" }, [
+            _c("b", [_vm._v(_vm._s(item.name))])
+          ]),
+          _vm._v(" "),
+          _c("p", { staticClass: "card-small-icon" }, [
+            _c("img", {
+              attrs: {
+                src: "app/specialities/" + item.id + ".jpg",
+                width: "70"
+              }
+            })
+          ]),
+          _vm._v(" "),
+          _c("p", { staticClass: "card-foo" }, [
+            _vm._v(_vm._s(item.descripcion))
+          ]),
+          _vm._v(" "),
+          _c("p", { staticClass: "card-btn" }, [
+            _c(
+              "button",
+              {
+                staticClass: "btn btn-sm btn-dark",
+                attrs: {
+                  "data-toggle": "modal",
+                  "data-target": "#exampleModalLong"
+                },
+                on: {
+                  click: function($event) {
+                    return _vm.Search(item)
+                  }
+                }
+              },
+              [_c("i", { staticClass: "fa fa-clock" }), _vm._v(" Reservar")]
+            )
+          ])
+        ])
+      }),
+      0
+    )
+  ])
 }
 var staticRenderFns = [
   function() {
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "container" }, [
-      _c("div", { staticClass: "grid" }, [
-        _c("div", { staticClass: "card-small" }, [
-          _c("p", { staticClass: "card-small-views" }, [
-            _c("b", [_vm._v("Especialidad")]),
-            _c("br"),
-            _vm._v(
-              "\n                        Lorem ipsum.\n                    "
-            )
-          ]),
-          _vm._v(" "),
-          _c("p", { staticClass: "card-small-icon" }, [
-            _c("img", { attrs: { src: "app/doctors/1.jpg", width: "70" } })
-          ]),
-          _vm._v(" "),
-          _c("p")
-        ])
-      ])
+    return _c("div", { staticClass: "modal-header" }, [
+      _c(
+        "h5",
+        { staticClass: "modal-title", attrs: { id: "exampleModalLongTitle" } },
+        [
+          _c("i", { staticClass: "fa fa-clock" }),
+          _vm._v(" Horarios disponibles")
+        ]
+      ),
+      _vm._v(" "),
+      _c(
+        "button",
+        {
+          staticClass: "close",
+          attrs: {
+            type: "button",
+            "data-dismiss": "modal",
+            "aria-label": "Close"
+          }
+        },
+        [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
+      )
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "modal-footer" }, [
+      _c(
+        "button",
+        {
+          staticClass: "btn btn-secondary",
+          attrs: { type: "button", "data-dismiss": "modal" }
+        },
+        [_c("i", { staticClass: "fa fa-eye" }), _vm._v(" Ocultar")]
+      )
     ])
   }
 ]

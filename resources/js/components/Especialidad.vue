@@ -11,7 +11,7 @@
             <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Crear especialidad</h5>
+                        <h5 class="modal-title" id="exampleModalLabel"><i class="fa fa-plus-circle"></i> Crear especialidad</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -26,6 +26,17 @@
                                 <label for="color" class="col-sm-2 col-form-label">Color</label>
                                 <div class="col-sm-10">
                                     <input type="color" v-model="specialty.color" class="form-control" id="color" placeholder="Color" required>
+                                </div>
+                                <label for="descripcion" class="col-sm-2 col-form-label">Descripcion</label>
+                                <div class="col-sm-10">
+                                    <input type="text" v-model="specialty.descripcion" class="form-control" id="descripcion" placeholder="Descripcion" required>
+                                </div>
+                                <label for="file" class="col-sm-2 col-form-label">Fotografia</label>
+                                <div class="col-sm-5">
+                                    <input type="file" @change="subirfoto"  class="form-control" id="file" placeholder="Color" required>
+                                </div>
+                                <div class="col-sm-5">
+                                    <img src="img/virus.png" id="avatar" alt="" width="70">
                                 </div>
                             </div>
                             <div class="modal-footer">
@@ -42,12 +53,18 @@
             <tr>
                 <th>Id</th>
                 <th>Nombre</th>
+                <th>Descripcion</th>
+                <th>Estado</th>
+                <th>Foto</th>
                 <th>Color</th>
                 <th>Options</th>
             </tr>
             <tr v-for="(item,index) in specialtys" :key="index">
                 <td>{{item.id}}</td>
                 <td>{{item.name}}</td>
+                <td>{{item.descripcion}}</td>
+                <td><div class="badge" v-bind:class="item.estado=='ACTIVO'?'badge-success':'badge-warning'">{{item.estado}}</div></td>
+                <td><img v-bind:src="'app/specialities/' + item.id+'.jpg'" width="25" /> </td>
                 <td> <div class="bg text-center" :style="{background:item.color}">Color</div></td>
                 <td>
                     <button type="button" class="btn btn-warning p-1 m-0" data-toggle="modal" data-target="#update" @click="datact(item)"><i class="fa fa-edit"></i> Actuali</button>
@@ -72,6 +89,29 @@
                                 <label for="name2" class="col-sm-2 col-form-label">Name</label>
                                 <div class="col-sm-10">
                                     <input type="text" v-model="specialty.name" class="form-control" id="name2" placeholder="Name" required>
+                                </div>
+                                <label for="color2" class="col-sm-2 col-form-label">Color</label>
+                                <div class="col-sm-10">
+                                    <input type="color" v-model="specialty.color" class="form-control" id="color2" placeholder="Color" required>
+                                </div>
+                                <label for="descripcion2" class="col-sm-2 col-form-label">Descripcion</label>
+                                <div class="col-sm-10">
+                                    <input type="text" v-model="specialty.descripcion" class="form-control" id="descripcion2" placeholder="Descripcion" required>
+                                </div>
+                                <label for="estado2" class="col-sm-2 col-form-label">Estado</label>
+                                <div class="col-sm-10">
+<!--                                    <input type="text" v-model="specialty.estado" class="form-control" id="estado2" placeholder="Descripcion" required>-->
+                                    <select name="estad" id="estado2" class="form-control" v-model="specialty.estado" required>
+                                        <option value="ACTIVO">ACTIVO</option>
+                                        <option value="INACTIVO">INACTIVO</option>
+                                    </select>
+                                </div>
+                                <label for="file2" class="col-sm-2 col-form-label">Fotografia</label>
+                                <div class="col-sm-5">
+                                    <input type="file" @change="subirfoto2"  class="form-control" id="file2" placeholder="Fotografia">
+                                </div>
+                                <div class="col-sm-5">
+                                    <img id="avatar2" alt="" width="70" v-bind:src="'app/specialities/'+specialty.id+'.jpg'">
                                 </div>
                             </div>
                             <div class="modal-footer">
@@ -103,8 +143,38 @@
             this.datos();
         },
         methods:{
+            subirfoto:function(){
+              // alert('aa') ;
+                $('#avatar').attr('src','/img/virus.png');
+                let data = new FormData();
+                data.append('file', document.getElementById('file').files[0]);
+                axios.post('/subir',data).then((res)=>{
+                    // alert('a');
+                    $('#avatar').attr('src','/app/'+res.data)
+                });
+                return false;
+                e.preventDefault();
+            },
+            subirfoto2:function(){
+                // alert('aa') ;
+                $('#avatar2').attr('src','/img/virus.png');
+                let data = new FormData();
+                data.append('file', document.getElementById('file2').files[0]);
+                axios.post('/subir',data).then((res)=>{
+                    // alert('a');
+                    $('#avatar2').attr('src','/app/'+res.data)
+                });
+                return false;
+                e.preventDefault();
+            },
             Guardar(){
-                axios.post('/specialtys',this.specialty).then(res=>{
+                // console.log(this.specialty)
+                let data = new FormData();
+                data.append('file', document.getElementById('file').files[0]);
+                data.append('name',this.specialty.name)
+                data.append('descripcion',this.specialty.descripcion)
+                data.append('color',this.specialty.color)
+                axios.post('/specialtys',data).then(res=>{
                     // console.log(res);
                     $('#exampleModal').modal('hide');
                     this.datos();
@@ -115,6 +185,7 @@
                 this.doctors=[];
                 axios.get('/specialtys').then(res=>{
                     this.specialtys=res.data;
+
                 });
             },
             Borrar(id){
@@ -134,9 +205,16 @@
             },
             datact(item){
                 this.specialty=item;
+                // console.log(this.specialty);
             },
             Modificar(){
-                axios.put('/specialtys/'+this.specialty.id,this.specialty).then(res=>{
+                let data = new FormData();
+                data.append('file', document.getElementById('file2').files[0]);
+                data.append('name',this.specialty.name)
+                data.append('descripcion',this.specialty.descripcion)
+                data.append('color',this.specialty.color)
+                data.append('estado',this.specialty.estado)
+                axios.post('/specialtyUpdate/'+this.specialty.id,data).then(res=>{
                     // console.log(res);
                     $('#update').modal('hide');
                     this.datos();

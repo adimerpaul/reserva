@@ -30,6 +30,7 @@ Route::get('/especialidad', 'HomeController@especialidad')->name('doctor')->midd
 Route::apiResource('/reservation','ReservationController');
 Route::apiResource('/doctors','DoctorController');
 Route::apiResource('/specialtys','SpecialtyController');
+Route::post('/specialtyUpdate/{specialty}','SpecialtyController@specialtyUpdate');
 Route::post('/subir','DoctorController@subir');
 Route::post('/actphoto','DoctorController@actphoto');
 //Route::get('/subir','DoctorController@subir');

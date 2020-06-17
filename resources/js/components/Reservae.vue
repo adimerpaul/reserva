@@ -15,17 +15,17 @@
                         <div class="grid2">
                             <div v-for="(item, index) in reservations" :key="index" >
                                 <div class="card mb-3" style="max-width: 18rem;">
-                                    <div class="card-header text-center text-white bg-dark">Jueves 20 de octubre</div>
+                                    <div class="card-header text-center text-white bg-dark">{{item.fecha}}</div>
                                     <div >
                                         <ul class="eventos" >
-                                            <li v-for="dat in item.datos">
+                                            <li v-for="dat in item.datos" @click="Reservar(dat)">
                                                 {{dat.hora}}
                                             </li>
                                         </ul>
                                     </div>
                                 </div>
                             </div>
-                            {{reservations}}
+<!--                            {{reservations}}-->
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -55,6 +55,9 @@
 </template>
 
 <script>
+    import moment from "moment";
+    import $ from "jquery";
+    const dia=["","lunes", "martes", "miércoles", "jueves", "viernes","sabado","domingo"];
     export default {
         data(){
           return {
@@ -67,7 +70,9 @@
                   ],
           }
         },
-        mounted() {
+        mounted:function() {
+
+            moment.locale('es');
             // console.log('reserva especialidad mounted.')
             axios.get('/specialtys').then(res=>{
                 // this.especialidades=res.data;
@@ -84,29 +89,93 @@
                 });
                 // console.log(this.especialidades);
             })
+
         },
         methods:{
+            Reservar(item){
+
+                this.$fire({
+                    imageUrl: 'app/doctors/'+item.doctor_id+'.jpg',
+                    imageHeight: 50,
+                    title: "Solo puede realizar una reserva por dia!",
+                    text: "Doctor: "+item.doctor +" Especialidad: "+item.especialidad+" Hora: "+item.hora,
+                    // type: "question",
+                    timer: 10000,
+                    showCloseButton: true,
+                    showCancelButton: true,
+                }).then(r => {
+                    // console.log(r.value);
+                    if (r.value==true){
+                        // console.log(item.id);
+                        axios.post('/preguntauser',{}).then(res=>{
+                            // console.log(res)
+                            if (res.data=="") {
+                                this.$fire({
+                                    title: "Nose puede!!!",
+                                    text: "Tienes que registrarte porfavor!!!!",
+                                    type: "warning",
+                                    timer: 10000,
+                                })
+                                $('#exampleModalLong').modal('hide');
+                            }
+                            else{
+                                axios.post('/preguntareservas',{}).then(res=>{
+                                    // console.log(res.data);
+                                    if (res.data==0){
+                                        axios.put('/reservation/'+item.id,{}).then(res=>{
+                                            this.$fire('Ya fue registrado!!')
+                                            // console.log(res);
+                                            this.Search(item);
+                                            $('#exampleModalLong').modal('hide');
+                                        });
+                                    }else{
+                                        this.$fire({
+                                            title: "Nose puede!!!",
+                                            text: "Solo puedes tener una reserva",
+                                            type: "warning",
+                                            timer: 10000,
+                                        })
+                                        // console.log(res);
+                                        // this.Search(item);
+                                        $('#exampleModalLong').modal('hide');
+                                    }
+                                })
+                            }
+                        });
+
+
+                    }
+                });
+
+                // this.$confirm("Una vez realizado la reserva no podra reservas mas!!").then(() => {
+                //     console.log(item)
+                // });
+            },
             Search(item){
                 // console.log(item.id)
                 axios.get('/reservation').then(res=>{
                     // console.log(res)
-                    // this.reservations=[];
+                    this.reservations=[];
                     res.data.forEach(dat=>{
-                        if (dat.specialty_id==item.id){
-                            // console.log( moment(dat.start).format('YYYY-MM-DD') );
-                            let fecha=moment(dat.start).format('YYYY-MM-DD');
-                            // this.reservations.push(dat);
+                        if (dat.specialty_id==item.id && dat.estado=='creado'){
+                            let fecha=dia[moment(dat.start).isoWeekday()]+","+moment(dat.start).format('LL');
+                            let horainicio=moment(dat.start).format('HH:mm');
+                            let horafin=moment(dat.end).format('HH:mm');
+                            let doctor=dat.doctor;
+                            let especialidad=dat.especialidad;
+                            let doctor_id=dat.doctor_id;
                             const found=this.reservations.findIndex(e=>e.fecha==fecha);
-                            console.log(found);
-                            // if(found==-1){
-                            //     this.reservations.push({fecha:fecha})
-                            // }else {
-                            //     // this.reservations.fecha.push({fecha:fecha})
-                            //
-                            // }
+                            if(found==-1){
+                                this.reservations.push({fecha:fecha,datos: [{hora:horainicio+' a '+horafin,id:dat.id,doctor,especialidad,doctor_id}]})
+                            }else{
+                                let f=this.reservations[found].fecha;
+                                let d=this.reservations[found].datos;
+                                d.push({hora:horainicio+' a '+horafin,id:dat.id,doctor,especialidad,doctor_id});
+                                // console.log(this.reservations[found].datos);
+                                this.reservations[found]={fecha: f,datos: d};
+                            }
                         }
-                    })
-
+                    });
                 });
             }
         }
@@ -126,6 +195,7 @@
         margin: 0px;
         padding: 0px;
         border: 1px solid #D0D0D0;
+        border-radius: 5px;
         font-size: 0.9em;
         margin-top: 10px;
         text-align: center;

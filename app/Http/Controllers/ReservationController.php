@@ -6,7 +6,7 @@ use App\User;
 use Illuminate\Http\Request;
 use App\Reservation;
 use Illuminate\Support\Facades\DB;
-
+use Auth;
 class ReservationController extends Controller
 {
     /**
@@ -16,9 +16,10 @@ class ReservationController extends Controller
      */
     public function index()
     {
-        return Reservation::select('reservations.id',DB::raw("CONCAT ('Doc: ',doctors.name,' \nEsp. ',specialtys.name) as title"),'start','end','color','specialty_id','reservado')
+        return Reservation::select('reservations.id',DB::raw("CONCAT ('Doc: ',doctors.name,' \nEsp. ',specialtys.name) as title"),'start','end','color','specialty_id','reservado','reservations.estado','doctors.name as doctor','specialtys.name as especialidad','doctor_id')
             ->join('doctors','doctor_id','=','doctors.id')
             ->join('specialtys','specialty_id','=','specialtys.id')
+            ->orderBy('start', 'asc')
             ->get();
 //        return Reservation::all(['start','id']);
     }
@@ -83,7 +84,11 @@ class ReservationController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $reservation=Reservation::find($id);
+        $reservation->estado='ocupado';
+        $reservation->reservado=Auth::user()->name;
+        $reservation->save();
+        return $reservation;
     }
 
     /**
@@ -96,6 +101,37 @@ class ReservationController extends Controller
     {
         $reservation= Reservation::find($id);
         $reservation->delete();
+        return $reservation;
+    }
+    public function buscar(Request $request){
+//        return Reservation::select('reservations.id',DB::raw("CONCAT ('Doc: ',doctors.name,' \nEsp. ',specialtys.name) as title"),'start','end','color','specialty_id','reservado','reservations.estado','doctors.name as doctor','specialtys.name as especialidad','doctor_id')
+//            ->join('doctors','doctor_id','=','doctors.id')
+//            ->join('specialtys','specialty_id','=','specialtys.id')
+//            ->where('date(updated_at)','==','date(now)')
+//            ->where('reservado','==',Auth::user()->name)
+//            ->orderBy('start', 'asc')
+//            ->get();
+        return DB::table('reservations')
+            ->where('estado', '=', 'ocupado')
+            ->whereDate('updated_at', '=', date('Y-m-d'))
+            ->where('reservado', '=', Auth::user()->name)
+            ->count();;
+    }
+    public function pregunta(Request $request){
+        return Auth::user();
+    }
+    public function liberar(Request $request, $id){
+        $reservation=Reservation::find($id);
+        $reservation->estado='creado';
+        $reservation->reservado='';
+        $reservation->save();
+        return $reservation;
+    }
+    public function ocupar(Request $request,$id){
+        $reservation=Reservation::find($id);
+        $reservation->estado='ocupado';
+        $reservation->reservado='';
+        $reservation->save();
         return $reservation;
     }
 }

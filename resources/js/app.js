@@ -7,7 +7,9 @@ Vue.use(VueRouter);
 import vSelect from 'vue-select';
 import 'vue-select/dist/vue-select.css';
 Vue.component('v-select', vSelect);
+import VueSimpleAlert from "vue-simple-alert";
 
+Vue.use(VueSimpleAlert);
 import VueSelectImage from 'vue-select-image'
 
 require('vue-select-image/dist/vue-select-image.css');

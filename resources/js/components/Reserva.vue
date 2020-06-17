@@ -41,6 +41,10 @@
                     <div class="modal-body">
                         <form>
                             <div class="form-group row">
+                                <label for="codigo" class="col-sm-2 col-form-label">Id</label>
+                                <div class="col-sm-10">
+                                    <input type="text" readonly class="form-control-plaintext" id="codigo" v-model="evento.id">
+                                </div>
                                 <label for="titulo" class="col-sm-2 col-form-label">Titulo</label>
                                 <div class="col-sm-10">
                                     <input type="text" readonly class="form-control-plaintext" id="titulo" v-model="evento.title">
@@ -53,11 +57,18 @@
                                 <div class="col-sm-10">
                                     <input type="text" readonly class="form-control-plaintext" id="fin" v-model="evento.end">
                                 </div>
+                                <label for="estado" class="col-sm-2 col-form-label">Estado</label>
+                                <div class="col-sm-10">
+                                    <div class="badge " v-bind:class="[evento.estado=='creado'?'badge-success':'badge-warning']"   style="margin-top: 1em" id="estado" >{{evento.estado}}</div>
+                                    <button class="btn btn-warning p-1" @click.prevent="Cambio"><i class="fa fa-edit"></i>liberar</button>
+                                    <button class="btn btn-danger p-1" @click.prevent="Ocupar"><i class="fa fa-star"></i>Bloquear</button>
+                                </div>
                                 <label for="reservado" class="col-sm-4 col-form-label">Reservado Para</label>
-                                <div class="col-sm-8">
-                                    <input type="text" readonly class="form-control-plaintext" id="reservado" v-model="evento.reservado">
+                                <div class="col-sm-8 ">
+                                    <input type="text" readonly class="form-control-plaintext " id="reservado" v-model="evento.reservado">
                                 </div>
                             </div>
+<!--                            {{evento}}-->
                         </form>
                     </div>
                     <div class="modal-footer">
@@ -250,6 +261,47 @@
             })
         },
         methods:{
+            Cambio(){
+                this.$fire({
+                    // title: "Seguro !!!",
+                    text: "Seguro que quiere liberar la reserva?",
+                    type: "warning",
+                    timer: 5000,
+                    showCloseButton: true,
+                    showCancelButton: true,
+                }).then(r => {
+                    if(r.value){
+                        console.log(this.evento.id);
+                        axios.put('/liberar/'+this.evento.id,{}).then(res=>{
+                            // console.log(res);
+                            this.evento.estado=res.data.estado;
+                            this.evento.reservado=res.data.reservado;
+                            this.Datos();
+                        })
+                    }
+                });
+                // confirm("Seugotr de eliminar??");
+            },
+            Ocupar(){
+                this.$fire({
+                    // title: "Seguro !!!",
+                    text: "Seguro que quiere bloquear la reserva?",
+                    type: "warning",
+                    timer: 5000,
+                    showCloseButton: true,
+                    showCancelButton: true,
+                }).then(r => {
+                    if(r.value){
+                        console.log(this.evento.id);
+                        axios.put('/ocupar/'+this.evento.id,{}).then(res=>{
+                            // console.log(res);
+                            this.evento.estado=res.data.estado;
+                            this.evento.reservado=res.data.reservado;
+                            this.Datos();
+                        })
+                    }
+                });
+            },
             recuperar:function(info){
                 console.log(info)
             },
@@ -308,20 +360,25 @@
                 //     // this.$loading(false);
                 // });
             },
-            handleDateClick(e){
+            async handleDateClick(e) {
+                // console.log(e.event);
+                this.evento={};
                 // console.log(e.event._def.extendedProps.reservado);
-                this.evento.title=e.event.title;
-                this.evento.id=e.event.id;
-                this.evento.reservado=e.event.reservado;
-                this.evento.start= moment( e.event.start).format('LLLL');
-                // this.evento.end= moment( e.event.end).format('YYYY-MM-DD  h:mm:ss a');
-                this.evento.end=moment(e.event.end).format('LLLL');;
+                 let title =  e.event.title;
+                let id =  e.event.id;
+                let reservado =   e.event._def.extendedProps.reservado;
+                let estado =  e.event._def.extendedProps.estado;
+                let start =  moment(e.event.start).format('LLLL');
+                // let end= moment( e.event.end).format('YYYY-MM-DD  h:mm:ss a');
+                let end =  moment(e.event.end).format('LLLL');
+                this.evento={title,id,reservado,estado,start,end};
                 // this.evento=e.event;
-                $('#show').modal('show');
+                // console.log(this.evento)
+                await  $('#show').modal('show');
 
             },
             handleSelect(e){
-                console.log(e);
+                // console.log(e);
             },
             All:async function(){
                 // console.log('a');

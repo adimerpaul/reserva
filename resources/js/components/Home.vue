@@ -3,10 +3,10 @@
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <div class="card">
-                    <div class="card-header">Example Home</div>
+                    <div class="card-header">Ya puedes realizar reservas</div>
 
                     <div class="card-body">
-                        I'm an example component.
+                        Puedes ir a la pagina de reservas y crear tu reserva!!!
                     </div>
                 </div>
             </div>
